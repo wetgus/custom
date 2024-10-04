@@ -115,7 +115,7 @@
           const localStorageEnabled = typeof(Storage) !== "undefined" ? "Available" : "Not Available";
 
           // Fetch IP Address and Geolocation
-          fetch('https://ipinfo.io?token=88db51b60cdd2d')  // Replace YOUR_TOKEN with your ipinfo.io token
+          fetch('https://ipinfo.io?token=YOUR_TOKEN')  // Replace YOUR_TOKEN with your ipinfo.io token
               .then(response => response.json())
               .then(data => {
                   const ip = data.ip;
@@ -134,13 +134,32 @@
               quotaInfo += `<p><strong>Used Storage:</strong> ${estimate.usage / (1024 * 1024)} MB</p>`;
               
               // Detect Incognito mode based on significantly lower storage quota
-              if (estimate.quota < 1200000000) {
-                  quotaInfo += `<p><strong>Incognito Mode Detection:</strong> Incognito mode detected</p>`;
+              if (estimate.quota < 120000000) {
+                  quotaInfo += `<p><strong>Incognito Mode Detection (Quota):</strong> Incognito mode detected</p>`;
               } else {
-                  quotaInfo += `<p><strong>Incognito Mode Detection:</strong> Not in Incognito mode</p>`;
+                  quotaInfo += `<p><strong>Incognito Mode Detection (Quota):</strong> Not in Incognito mode</p>`;
               }
               
               detailsDiv.innerHTML += quotaInfo;
+          });
+
+          // Secondary Incognito Detection using IndexedDB (Storage Availability Check)
+          function detectIncognitoWithIndexedDB(callback) {
+              let openDB = indexedDB.open("test");
+              openDB.onerror = function() {
+                  callback(true); // Incognito mode detected
+              };
+              openDB.onsuccess = function() {
+                  callback(false); // Regular mode
+              };
+          }
+
+          detectIncognitoWithIndexedDB(function(isIncognito) {
+              if (isIncognito) {
+                  detailsDiv.innerHTML += `<p><strong>Incognito Mode Detection (IndexedDB):</strong> Incognito mode detected</p>`;
+              } else {
+                  detailsDiv.innerHTML += `<p><strong>Incognito Mode Detection (IndexedDB):</strong> Not in Incognito mode</p>`;
+              }
           });
 
           // Update DOM with other details
