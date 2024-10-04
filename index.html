@@ -90,6 +90,61 @@
           detailsDiv.innerHTML += `<p><strong>WebGL Vendor:</strong> ${webGLInfo.vendor}</p>`;
           detailsDiv.innerHTML += `<p><strong>WebGL Renderer:</strong> ${webGLInfo.renderer}</p>`;
           detailsDiv.innerHTML += `<p><strong>WebGL Extensions:</strong> ${webGLInfo.extensions.join(', ')}</p>`;
+
+          // Audio Fingerprinting
+          function audioFingerprint() {
+              return new Promise((resolve) => {
+                  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                  const oscillator = audioContext.createOscillator();
+                  oscillator.type = 'triangle';
+                  oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4
+                  oscillator.connect(audioContext.destination);
+                  oscillator.start();
+                  oscillator.stop(audioContext.currentTime + 0.1);
+                  audioContext.onstatechange = function() {
+                      const fingerprint = audioContext.sampleRate + ' Hz, ' + audioContext.baseLatency + 's';
+                      resolve(fingerprint);
+                  };
+              });
+          }
+
+          // Media Devices
+          function getMediaDevices() {
+              return navigator.mediaDevices.enumerateDevices()
+                 .then(devices => devices.map(device => `${device.kind}: ${device.label}`).join(', '));
+          }
+
+          // Network Properties
+          const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+          const networkProperties = connection ? {
+              effectiveType: connection.effectiveType,
+              downlink: connection.downlink,
+              rtt: connection.rtt
+          } : 'Network API not supported';
+
+          // Timezone and Language
+          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          const language = navigator.language || navigator.userLanguage;
+          const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+
+          // Cookies and Local Storage
+          const cookiesEnabled = navigator.cookieEnabled ? "Enabled" : "Disabled";
+          const localStorageEnabled = typeof(Storage) !== "undefined" ? "Available" : "Not Available";
+
+          // Update DOM with all details
+          audioFingerprint().then(audioInfo => {
+              detailsDiv.innerHTML += `<p><strong>Audio Fingerprint:</strong> ${audioInfo}</p>`;
+              
+              getMediaDevices().then(mediaDevicesInfo => {
+                  detailsDiv.innerHTML += `<p><strong>Media Devices:</strong> ${mediaDevicesInfo}</p>`;
+                  detailsDiv.innerHTML += `<p><strong>Network Properties:</strong> Effective Type: ${networkProperties.effectiveType || 'N/A'}, Downlink: ${networkProperties.downlink || 'N/A'} Mbps, RTT: ${networkProperties.rtt || 'N/A'} ms</p>`;
+                  detailsDiv.innerHTML += `<p><strong>Timezone:</strong> ${timezone}</p>`;
+                  detailsDiv.innerHTML += `<p><strong>Language:</strong> ${language}</p>`;
+                  detailsDiv.innerHTML += `<p><strong>Locale:</strong> ${locale}</p>`;
+                  detailsDiv.innerHTML += `<p><strong>Cookies:</strong> ${cookiesEnabled}</p>`;
+                  detailsDiv.innerHTML += `<p><strong>Local Storage:</strong> ${localStorageEnabled}</p>`;
+              });
+          });
       }
 
       // Call the function to display details
