@@ -23,7 +23,7 @@
           const screenHeight = window.screen.height;
           detailsDiv.innerHTML += `<p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>`;
 
-          // Detect Installed Fonts
+          // Installed Fonts
           function detectFonts(fonts) {
               const canvas = document.createElement('canvas');
               const context = canvas.getContext('2d');
@@ -65,6 +65,31 @@
 
           const fingerprint = canvasFingerprint();
           detailsDiv.innerHTML += `<p><strong>Canvas Fingerprint:</strong> ${fingerprint}</p>`;
+
+          // WebGL Fingerprinting
+          function webGLFingerprint() {
+              const canvas = document.createElement('canvas');
+              const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+              if (!gl) {
+                  return 'WebGL not supported';
+              }
+
+              const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+              const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+              const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+              const extensions = gl.getSupportedExtensions();
+
+              return {
+                  vendor,
+                  renderer,
+                  extensions
+              };
+          }
+
+          const webGLInfo = webGLFingerprint();
+          detailsDiv.innerHTML += `<p><strong>WebGL Vendor:</strong> ${webGLInfo.vendor}</p>`;
+          detailsDiv.innerHTML += `<p><strong>WebGL Renderer:</strong> ${webGLInfo.renderer}</p>`;
+          detailsDiv.innerHTML += `<p><strong>WebGL Extensions:</strong> ${webGLInfo.extensions.join(', ')}</p>`;
       }
 
       // Call the function to display details
