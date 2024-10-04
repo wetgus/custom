@@ -142,7 +142,21 @@
           const cookiesEnabled = navigator.cookieEnabled ? "Enabled" : "Disabled";
           const localStorageEnabled = typeof(Storage) !== "undefined" ? "Available" : "Not Available";
 
-          // Update DOM with all details
+          // Fetch IP Address and Geolocation
+          fetch('https://ipinfo.io?token=YOUR_TOKEN')  // Replace YOUR_TOKEN with your ipinfo.io token
+              .then(response => response.json())
+              .then(data => {
+                  const ip = data.ip;
+                  const city = data.city;
+                  const region = data.region;
+                  const country = data.country;
+                  const location = data.loc; // lat, long
+
+                  detailsDiv.innerHTML += `<p><strong>IP Address:</strong> ${ip}</p>`;
+                  detailsDiv.innerHTML += `<p><strong>Location:</strong> ${city}, ${region}, ${country} (Lat, Long: ${location})</p>`;
+              });
+
+          // Update DOM with other details
           audioFingerprint().then(audioInfo => {
               detailsDiv.innerHTML += `<p><strong>Audio Fingerprint:</strong> ${audioInfo}</p>`;
               
