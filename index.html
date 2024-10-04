@@ -50,6 +50,21 @@
           // Installed Plugins
           const plugins = Array.from(navigator.plugins).map(plugin => plugin.name);
           detailsDiv.innerHTML += `<p><strong>Installed Plugins:</strong> ${plugins.join(', ')}</p>`;
+
+          // Canvas Fingerprinting
+          function canvasFingerprint() {
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              context.textBaseline = 'top';
+              context.font = '14px Arial';
+              context.fillText('Testing canvas fingerprinting', 2, 2);
+              const dataUrl = canvas.toDataURL();
+              const fingerprint = dataUrl.substring(dataUrl.indexOf(',') + 1); // Strip the prefix
+              return fingerprint;
+          }
+
+          const fingerprint = canvasFingerprint();
+          detailsDiv.innerHTML += `<p><strong>Canvas Fingerprint:</strong> ${fingerprint}</p>`;
       }
 
       // Call the function to display details
