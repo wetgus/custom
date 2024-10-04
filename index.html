@@ -91,20 +91,31 @@
           detailsDiv.innerHTML += `<p><strong>WebGL Renderer:</strong> ${webGLInfo.renderer}</p>`;
           detailsDiv.innerHTML += `<p><strong>WebGL Extensions:</strong> ${webGLInfo.extensions.join(', ')}</p>`;
 
-          // Audio Fingerprinting
+          // Audio Fingerprinting without sound
           function audioFingerprint() {
               return new Promise((resolve) => {
-                  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                  const audioContext = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100, 44100);
                   const oscillator = audioContext.createOscillator();
-                  oscillator.type = 'triangle';
-                  oscillator.frequency.setValueAtTime(440, audioContext.currentTime); // A4
-                  oscillator.connect(audioContext.destination);
-                  oscillator.start();
-                  oscillator.stop(audioContext.currentTime + 0.1);
-                  audioContext.onstatechange = function() {
-                      const fingerprint = audioContext.sampleRate + ' Hz, ' + audioContext.baseLatency + 's';
+                  const analyser = audioContext.createAnalyser();
+                  const gainNode = audioContext.createGain();
+                  const scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
+
+                  oscillator.type = 'sine';
+                  oscillator.frequency.setValueAtTime(10000, audioContext.currentTime);
+                  gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+
+                  oscillator.connect(analyser);
+                  analyser.connect(gainNode);
+                  gainNode.connect(scriptProcessor);
+                  scriptProcessor.connect(audioContext.destination);
+
+                  scriptProcessor.onaudioprocess = function() {
+                      const fingerprint = analyser.frequencyBinCount;
                       resolve(fingerprint);
                   };
+
+                  oscillator.start(0);
+                  audioContext.startRendering();
               });
           }
 
