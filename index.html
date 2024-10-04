@@ -91,34 +91,6 @@
           detailsDiv.innerHTML += `<p><strong>WebGL Renderer:</strong> ${webGLInfo.renderer}</p>`;
           detailsDiv.innerHTML += `<p><strong>WebGL Extensions:</strong> ${webGLInfo.extensions.join(', ')}</p>`;
 
-          // Audio Fingerprinting without sound
-          function audioFingerprint() {
-              return new Promise((resolve) => {
-                  const audioContext = new (window.OfflineAudioContext || window.webkitOfflineAudioContext)(1, 44100, 44100);
-                  const oscillator = audioContext.createOscillator();
-                  const analyser = audioContext.createAnalyser();
-                  const gainNode = audioContext.createGain();
-                  const scriptProcessor = audioContext.createScriptProcessor(4096, 1, 1);
-
-                  oscillator.type = 'sine';
-                  oscillator.frequency.setValueAtTime(10000, audioContext.currentTime);
-                  gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-
-                  oscillator.connect(analyser);
-                  analyser.connect(gainNode);
-                  gainNode.connect(scriptProcessor);
-                  scriptProcessor.connect(audioContext.destination);
-
-                  scriptProcessor.onaudioprocess = function() {
-                      const fingerprint = analyser.frequencyBinCount;
-                      resolve(fingerprint);
-                  };
-
-                  oscillator.start(0);
-                  audioContext.startRendering();
-              });
-          }
-
           // Media Devices
           function getMediaDevices() {
               return navigator.mediaDevices.enumerateDevices()
@@ -143,7 +115,7 @@
           const localStorageEnabled = typeof(Storage) !== "undefined" ? "Available" : "Not Available";
 
           // Fetch IP Address and Geolocation
-          fetch('https://ipinfo.io?token=88db51b60cdd2d')  // Replace YOUR_TOKEN with your ipinfo.io token
+          fetch('https://ipinfo.io?token=YOUR_TOKEN')  // Replace YOUR_TOKEN with your ipinfo.io token
               .then(response => response.json())
               .then(data => {
                   const ip = data.ip;
@@ -156,19 +128,30 @@
                   detailsDiv.innerHTML += `<p><strong>Location:</strong> ${city}, ${region}, ${country} (Lat, Long: ${location})</p>`;
               });
 
-          // Update DOM with other details
-          audioFingerprint().then(audioInfo => {
-              detailsDiv.innerHTML += `<p><strong>Audio Fingerprint:</strong> ${audioInfo}</p>`;
+          // Navigator Storage Quota to detect Incognito Mode
+          navigator.storage.estimate().then(estimate => {
+              let quotaInfo = `<p><strong>Storage Quota:</strong> ${estimate.quota / (1024 * 1024)} MB</p>`;
+              quotaInfo += `<p><strong>Used Storage:</strong> ${estimate.usage / (1024 * 1024)} MB</p>`;
               
-              getMediaDevices().then(mediaDevicesInfo => {
-                  detailsDiv.innerHTML += `<p><strong>Media Devices:</strong> ${mediaDevicesInfo}</p>`;
-                  detailsDiv.innerHTML += `<p><strong>Network Properties:</strong> Effective Type: ${networkProperties.effectiveType || 'N/A'}, Downlink: ${networkProperties.downlink || 'N/A'} Mbps, RTT: ${networkProperties.rtt || 'N/A'} ms</p>`;
-                  detailsDiv.innerHTML += `<p><strong>Timezone:</strong> ${timezone}</p>`;
-                  detailsDiv.innerHTML += `<p><strong>Language:</strong> ${language}</p>`;
-                  detailsDiv.innerHTML += `<p><strong>Locale:</strong> ${locale}</p>`;
-                  detailsDiv.innerHTML += `<p><strong>Cookies:</strong> ${cookiesEnabled}</p>`;
-                  detailsDiv.innerHTML += `<p><strong>Local Storage:</strong> ${localStorageEnabled}</p>`;
-              });
+              // Detect Incognito mode based on significantly lower storage quota
+              if (estimate.quota < 120000000) {
+                  quotaInfo += `<p><strong>Incognito Mode Detection:</strong> Incognito mode detected</p>`;
+              } else {
+                  quotaInfo += `<p><strong>Incognito Mode Detection:</strong> Not in Incognito mode</p>`;
+              }
+              
+              detailsDiv.innerHTML += quotaInfo;
+          });
+
+          // Update DOM with other details
+          getMediaDevices().then(mediaDevicesInfo => {
+              detailsDiv.innerHTML += `<p><strong>Media Devices:</strong> ${mediaDevicesInfo}</p>`;
+              detailsDiv.innerHTML += `<p><strong>Network Properties:</strong> Effective Type: ${networkProperties.effectiveType || 'N/A'}, Downlink: ${networkProperties.downlink || 'N/A'} Mbps, RTT: ${networkProperties.rtt || 'N/A'} ms</p>`;
+              detailsDiv.innerHTML += `<p><strong>Timezone:</strong> ${timezone}</p>`;
+              detailsDiv.innerHTML += `<p><strong>Language:</strong> ${language}</p>`;
+              detailsDiv.innerHTML += `<p><strong>Locale:</strong> ${locale}</p>`;
+              detailsDiv.innerHTML += `<p><strong>Cookies:</strong> ${cookiesEnabled}</p>`;
+              detailsDiv.innerHTML += `<p><strong>Local Storage:</strong> ${localStorageEnabled}</p>`;
           });
       }
 
