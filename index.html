@@ -45,6 +45,10 @@
         displayVPNProxyDetails();
         displayBotDetection();
         displayGeolocation();
+        // Call the displayDistance function after checking coordinates
+        setTimeout(() => {
+            displayDistance();
+        }, 1000); // Adjust timeout as necessary to ensure data is available
     </script>
 </body>
 </html>
