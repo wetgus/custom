@@ -4,6 +4,10 @@
 function displayBrowserDetails() {
     const detailsDiv = document.getElementById('browser-details');
 
+    // Add a section header
+    let browserHeader = `<h2>Browser Details</h2>`;
+    detailsDiv.innerHTML = browserHeader;
+
     // User Agent
     const userAgent = navigator.userAgent;
     detailsDiv.innerHTML += `<p><strong>User Agent:</strong> ${userAgent}</p>`;
