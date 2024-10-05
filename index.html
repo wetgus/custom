@@ -179,7 +179,7 @@
               };
           }
 
-          // Calculate latency (for VPN detection based on connection speed)
+                    // Calculate latency (for VPN detection based on connection speed)
           function calculateLatency(callback) {
               const startTime = performance.now();
               fetch('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png').then(() => {
@@ -188,20 +188,20 @@
               });
           }
 
-          // Get media devices and WebRTC IPs (for DNS leaks)
-          getMediaDevices().then(mediaDevicesInfo => {
-              detailsDiv.innerHTML += `<p><strong>Media Devices:</strong> ${mediaDevicesInfo}</p>`;
-              detailsDiv.innerHTML += `<p><strong>Network Properties:</strong> Effective Type: ${networkProperties.effectiveType || 'N/A'}, Downlink: ${networkProperties.downlink || 'N/A'} Mbps, RTT: ${networkProperties.rtt || 'N/A'} ms</p>`;
-              detailsDiv.innerHTML += `<p><strong>Timezone:</strong> ${timezone}</p>`;
-              detailsDiv.innerHTML += `<p><strong>Language:</strong> ${language}</p>`;
-              detailsDiv.innerHTML += `<p><strong>Locale:</strong> ${locale}</p>`;
-              detailsDiv.innerHTML += `<p><strong>Cookies:</strong> ${cookiesEnabled}</p>`;
-              detailsDiv.innerHTML += `<p><strong>Local Storage:</strong> ${localStorageEnabled}</p>`;
+          // Compare geolocation IP vs fetched IP
+          function compareGeolocationWithIP(ipData) {
+              navigator.geolocation.getCurrentPosition((position) => {
+                  const { latitude, longitude } = position.coords;
+                  const ipLatLong = ipData.loc.split(',');
+                  const geoDistance = Math.sqrt(Math.pow((latitude - ipLatLong[0]), 2) + Math.pow((longitude - ipLatLong[1]), 2));
 
-              // WebRTC IP check (DNS leaks)
-              getWebRTCIPs(webrtcIP => {
-                  detailsDiv.innerHTML += `<p><strong>WebRTC IP (DNS Leak):</strong> ${webrtcIP}</p>`;
-
+                  if (geoDistance > 500) { // Arbitrary threshold in kilometers
+                      detailsDiv.innerHTML += `<p><strong>Geolocation vs IP Mismatch:</strong> Mismatch detected</p>`;
+                  } else {
+                      detailsDiv.innerHTML += `<p><strong>Geolocation vs IP Mismatch:</strong> No mismatch</p>`;
+                  }
+              });
+          }
 
           // WebRTC detection to check DNS leaks
           function getWebRTCIPs(callback) {
@@ -218,30 +218,6 @@
                       }
                   }
               };
-          }
-
-          // Calculate latency (for VPN detection based on connection speed)
-          function calculateLatency(callback) {
-              const startTime = performance.now();
-              fetch('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png').then(() => {
-                  const latency = performance.now() - startTime;
-                  callback(latency);
-              });
-          }
-
-          // Compare geolocation IP vs fetched IP
-          function compareGeolocationWithIP(ipData) {
-              navigator.geolocation.getCurrentPosition((position) => {
-                  const { latitude, longitude } = position.coords;
-                  const ipLatLong = ipData.loc.split(',');
-                  const geoDistance = Math.sqrt(Math.pow((latitude - ipLatLong[0]), 2) + Math.pow((longitude - ipLatLong[1]), 2));
-
-                  if (geoDistance > 500) { // Arbitrary threshold
-                      detailsDiv.innerHTML += `<p><strong>Geolocation vs IP Mismatch:</strong> Mismatch detected</p>`;
-                  } else {
-                      detailsDiv.innerHTML += `<p><strong>Geolocation vs IP Mismatch:</strong> No mismatch</p>`;
-                  }
-              });
           }
 
           // Fetch IP Address and check mismatch with geolocation
@@ -270,10 +246,7 @@
           calculateLatency(function(latency) {
               detailsDiv.innerHTML += `<p><strong>Connection Latency:</strong> ${latency.toFixed(2)} ms</p>`;
           });
-      }
 
-      // Call the function to display details
-      displayBrowserDetails();
     </script>
 </body>
 </html>
