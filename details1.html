@@ -6,16 +6,19 @@
     <title>Browser Details</title>
 </head>
 <body>
-    <h1>Browser and Fingerprinting Details</h1>
+    <h1>Browser and Network Details</h1>
     <div id="browser-details"></div>
     <div id="fingerprinting-details"></div>
+    <div id="network-details"></div>
 
     <script src="browserDetails.js"></script> <!-- Script for basic browser details -->
     <script src="fingerprintingDetails.js"></script> <!-- Script for fingerprinting details -->
+    <script src="networkDetails.js"></script> <!-- Script for network properties and IP address -->
 
     <script>
         displayBrowserDetails();  // Call function for browser details
         displayFingerprintingDetails();  // Call function for fingerprinting and media devices
+        displayNetworkDetails();  // Call function for network properties and geolocation
     </script>
 </body>
 </html>
