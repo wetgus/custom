@@ -16,12 +16,12 @@
 
           // User Agent
           const userAgent = navigator.userAgent;
-          detailsDiv.innerHTML += <p><strong>User Agent:</strong> ${userAgent}</p>;
+          detailsDiv.innerHTML += `<p><strong>User Agent:</strong> ${userAgent}</p>`;
 
           // Screen Resolution
           const screenWidth = window.screen.width;
           const screenHeight = window.screen.height;
-          detailsDiv.innerHTML += <p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>;
+          detailsDiv.innerHTML += `<p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>`;
 
           // Installed Fonts
           function detectFonts(fonts) {
@@ -30,7 +30,7 @@
               const detectedFonts = [];
 
               fonts.forEach(font => {
-                  context.font = 72px ${font};
+                  context.font = `72px ${font}`;
                   const width = context.measureText('abcdefghijklmnopqrstuvwxyz').width;
                   context.font = '72px monospace'; // Fallback font
                   const fallbackWidth = context.measureText('abcdefghijklmnopqrstuvwxyz').width;
@@ -45,11 +45,11 @@
 
           const fontsToCheck = ['Arial', 'Verdana', 'Times New Roman', 'Courier New', 'Georgia'];
           const installedFonts = detectFonts(fontsToCheck);
-          detailsDiv.innerHTML += <p><strong>Installed Fonts:</strong> ${installedFonts.join(', ')}</p>;
+          detailsDiv.innerHTML += `<p><strong>Installed Fonts:</strong> ${installedFonts.join(', ')}</p>`;
 
           // Installed Plugins
           const plugins = Array.from(navigator.plugins).map(plugin => plugin.name);
-          detailsDiv.innerHTML += <p><strong>Installed Plugins:</strong> ${plugins.join(', ')}</p>;
+          detailsDiv.innerHTML += `<p><strong>Installed Plugins:</strong> ${plugins.join(', ')}</p>`;
 
           // Canvas Fingerprinting
           function canvasFingerprint() {
@@ -64,7 +64,7 @@
           }
 
           const fingerprint = canvasFingerprint();
-          detailsDiv.innerHTML += <p><strong>Canvas Fingerprint:</strong> ${fingerprint}</p>;
+          detailsDiv.innerHTML += `<p><strong>Canvas Fingerprint:</strong> ${fingerprint}</p>`;
 
           // WebGL Fingerprinting
           function webGLFingerprint() {
@@ -87,14 +87,14 @@
           }
 
           const webGLInfo = webGLFingerprint();
-          detailsDiv.innerHTML += <p><strong>WebGL Vendor:</strong> ${webGLInfo.vendor}</p>;
-          detailsDiv.innerHTML += <p><strong>WebGL Renderer:</strong> ${webGLInfo.renderer}</p>;
-          detailsDiv.innerHTML += <p><strong>WebGL Extensions:</strong> ${webGLInfo.extensions.join(', ')}</p>;
+          detailsDiv.innerHTML += `<p><strong>WebGL Vendor:</strong> ${webGLInfo.vendor}</p>`;
+          detailsDiv.innerHTML += `<p><strong>WebGL Renderer:</strong> ${webGLInfo.renderer}</p>`;
+          detailsDiv.innerHTML += `<p><strong>WebGL Extensions:</strong> ${webGLInfo.extensions.join(', ')}</p>`;
 
           // Media Devices
           function getMediaDevices() {
               return navigator.mediaDevices.enumerateDevices()
-                 .then(devices => devices.map(device => ${device.kind}: ${device.label}).join(', '));
+                 .then(devices => devices.map(device => `${device.kind}: ${device.label}`).join(', '));
           }
 
           // Network Properties
@@ -124,20 +124,20 @@
                   const country = data.country;
                   const location = data.loc; // lat, long
 
-                  detailsDiv.innerHTML += <p><strong>IP Address:</strong> ${ip}</p>;
-                  detailsDiv.innerHTML += <p><strong>Location:</strong> ${city}, ${region}, ${country} (Lat, Long: ${location})</p>;
+                  detailsDiv.innerHTML += `<p><strong>IP Address:</strong> ${ip}</p>`;
+                  detailsDiv.innerHTML += `<p><strong>Location:</strong> ${city}, ${region}, ${country} (Lat, Long: ${location})</p>`;
               });
 
           // Navigator Storage Quota to detect Incognito Mode
           navigator.storage.estimate().then(estimate => {
-              let quotaInfo = <p><strong>Storage Quota:</strong> ${estimate.quota / (1024 * 1024)} MB</p>;
-              quotaInfo += <p><strong>Used Storage:</strong> ${estimate.usage / (1024 * 1024)} MB</p>;
+              let quotaInfo = `<p><strong>Storage Quota:</strong> ${estimate.quota / (1024 * 1024)} MB</p>`;
+              quotaInfo += `<p><strong>Used Storage:</strong> ${estimate.usage / (1024 * 1024)} MB</p>`;
               
               // Detect Incognito mode based on significantly lower storage quota
               if (estimate.quota < 1000000000) {
-                  quotaInfo += <p><strong>Incognito Mode Detection (Quota):</strong> Incognito mode detected</p>;
+                  quotaInfo += `<p><strong>Incognito Mode Detection (Quota):</strong> Incognito mode detected</p>`;
               } else {
-                  quotaInfo += <p><strong>Incognito Mode Detection (Quota):</strong> Not in Incognito mode</p>;
+                  quotaInfo += `<p><strong>Incognito Mode Detection (Quota):</strong> Not in Incognito mode</p>`;
               }
               
               detailsDiv.innerHTML += quotaInfo;
@@ -156,21 +156,21 @@
 
           detectIncognitoWithIndexedDB(function(isIncognito) {
               if (isIncognito) {
-                  detailsDiv.innerHTML += <p><strong>Incognito Mode Detection (IndexedDB):</strong> Incognito mode detected</p>;
+                  detailsDiv.innerHTML += `<p><strong>Incognito Mode Detection (IndexedDB):</strong> Incognito mode detected</p>`;
               } else {
-                  detailsDiv.innerHTML += <p><strong>Incognito Mode Detection (IndexedDB):</strong> Not in Incognito mode</p>;
+                  detailsDiv.innerHTML += `<p><strong>Incognito Mode Detection (IndexedDB):</strong> Not in Incognito mode</p>`;
               }
           });
 
           // Update DOM with other details
           getMediaDevices().then(mediaDevicesInfo => {
-              detailsDiv.innerHTML += <p><strong>Media Devices:</strong> ${mediaDevicesInfo}</p>;
-              detailsDiv.innerHTML += <p><strong>Network Properties:</strong> Effective Type: ${networkProperties.effectiveType || 'N/A'}, Downlink: ${networkProperties.downlink || 'N/A'} Mbps, RTT: ${networkProperties.rtt || 'N/A'} ms</p>;
-              detailsDiv.innerHTML += <p><strong>Timezone:</strong> ${timezone}</p>;
-              detailsDiv.innerHTML += <p><strong>Language:</strong> ${language}</p>;
-              detailsDiv.innerHTML += <p><strong>Locale:</strong> ${locale}</p>;
-              detailsDiv.innerHTML += <p><strong>Cookies:</strong> ${cookiesEnabled}</p>;
-              detailsDiv.innerHTML += <p><strong>Local Storage:</strong> ${localStorageEnabled}</p>;
+              detailsDiv.innerHTML += `<p><strong>Media Devices:</strong> ${mediaDevicesInfo}</p>`;
+              detailsDiv.innerHTML += `<p><strong>Network Properties:</strong> Effective Type: ${networkProperties.effectiveType || 'N/A'}, Downlink: ${networkProperties.downlink || 'N/A'} Mbps, RTT: ${networkProperties.rtt || 'N/A'} ms</p>`;
+              detailsDiv.innerHTML += `<p><strong>Timezone:</strong> ${timezone}</p>`;
+              detailsDiv.innerHTML += `<p><strong>Language:</strong> ${language}</p>`;
+              detailsDiv.innerHTML += `<p><strong>Locale:</strong> ${locale}</p>`;
+              detailsDiv.innerHTML += `<p><strong>Cookies:</strong> ${cookiesEnabled}</p>`;
+              detailsDiv.innerHTML += `<p><strong>Local Storage:</strong> ${localStorageEnabled}</p>`;
           });
       }
 
