@@ -1,5 +1,7 @@
 // networkDetails.js
 
+let vpnCoordinates = { latitude: null, longitude: null }; // Global variable to store VPN coordinates
+
 // Function to display network properties and geolocation details
 function displayNetworkDetails() {
     const detailsDiv = document.getElementById('network-details');
@@ -30,12 +32,19 @@ function displayNetworkDetails() {
             const city = data.city;
             const region = data.region;
             const country = data.country;
-            const location = data.loc; // Latitude, Longitude
+            const location = data.loc.split(','); // Split string to get lat/long
+
+            // Store VPN coordinates
+            vpnCoordinates.latitude = parseFloat(location[0]);
+            vpnCoordinates.longitude = parseFloat(location[1]);
 
             detailsDiv.innerHTML += `
                 <p><strong>IP Address:</strong> ${ip}</p>
                 <p><strong>Location:</strong> ${city}, ${region}, ${country} (Lat, Long: ${location})</p>
             `;
+
+            // Call the distance calculation function after network details are fetched
+            calculateDistance();
         })
         .catch(error => {
             detailsDiv.innerHTML += `<p><strong>Error Fetching IP/Geolocation:</strong> ${error.message}</p>`;
