@@ -37,27 +37,13 @@ function displayAdditionalDetails() {
     }
     detailsDiv.innerHTML += `<p><strong>Device Type:</strong> ${deviceType}</p>`;
 
-    // Media Devices
-    navigator.mediaDevices.enumerateDevices()
-        .then(devices => {
-            const mediaDevices = devices.map(device => `${device.kind}: ${device.label || 'Unnamed device'}`).join(', ');
-            detailsDiv.innerHTML += `<p><strong>Media Devices:</strong> ${mediaDevices || 'No media devices detected'}</p>`;
-        })
-        .catch(error => {
-            console.error('Error accessing media devices:', error);
-            detailsDiv.innerHTML += `<p><strong>Media Devices:</strong> Error accessing devices</p>`;
-        });
 
     // User-Agent Overrides
     const isUserAgentOverridden = (navigator.userAgent !== window.navigator.userAgent) ? "User-Agent overridden" : "User-Agent not overridden";
     detailsDiv.innerHTML += `<p><strong>User-Agent Override:</strong> ${isUserAgentOverridden}</p>`;
 
     // Additional Screen Properties
-    const screenWidth = window.screen.width;
-    const screenHeight = window.screen.height;
     const pixelRatio = window.devicePixelRatio;
-    detailsDiv.innerHTML += `<p><strong>Screen Width:</strong> ${screenWidth}px</p>`;
-    detailsDiv.innerHTML += `<p><strong>Screen Height:</strong> ${screenHeight}px</p>`;
     detailsDiv.innerHTML += `<p><strong>Device Pixel Ratio:</strong> ${pixelRatio}</p>`;
 }
 
