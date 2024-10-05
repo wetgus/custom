@@ -4,6 +4,10 @@
 function displayFingerprintingDetails() {
     const detailsDiv = document.getElementById('fingerprinting-details');
 
+    // Add a section header
+    let fingerprintingHeader = `<h2>Fingerprinting Details</h2>`;
+    detailsDiv.innerHTML = fingerprintingHeader;
+
     // Canvas Fingerprinting
     function canvasFingerprint() {
         const canvas = document.createElement('canvas');
@@ -40,9 +44,11 @@ function displayFingerprintingDetails() {
     }
 
     const webGLInfo = webGLFingerprint();
-    detailsDiv.innerHTML += `<p><strong>WebGL Vendor:</strong> ${webGLInfo.vendor}</p>`;
-    detailsDiv.innerHTML += `<p><strong>WebGL Renderer:</strong> ${webGLInfo.renderer}</p>`;
-    detailsDiv.innerHTML += `<p><strong>WebGL Extensions:</strong> ${webGLInfo.extensions.join(', ')}</p>`;
+    detailsDiv.innerHTML += `
+        <p><strong>WebGL Vendor:</strong> ${webGLInfo.vendor}</p>
+        <p><strong>WebGL Renderer:</strong> ${webGLInfo.renderer}</p>
+        <p><strong>WebGL Extensions:</strong> ${webGLInfo.extensions.join(', ')}</p>
+    `;
 
     // Media Devices Detection
     function getMediaDevices() {
