@@ -6,22 +6,25 @@
     <title>Browser Details</title>
 </head>
 <body>
-    <h1>Browser and Privacy Details</h1>
+    <h1>Browser and Security Details</h1>
     <div id="browser-details"></div>
     <div id="fingerprinting-details"></div>
     <div id="network-details"></div>
-    <div id="privacy-details"></div> <!-- New div for privacy details -->
+    <div id="privacy-details"></div>
+    <div id="security-details"></div> <!-- New div for security details -->
 
-    <script src="browserDetails.js"></script> <!-- Script for basic browser details -->
-    <script src="fingerprintingDetails.js"></script> <!-- Script for fingerprinting details -->
-    <script src="networkDetails.js"></script> <!-- Script for network properties and IP address -->
-    <script src="privacyDetails.js"></script> <!-- Script for privacy-related details -->
+    <script src="browserDetails.js"></script>
+    <script src="fingerprintingDetails.js"></script>
+    <script src="networkDetails.js"></script>
+    <script src="privacyDetails.js"></script>
+    <script src="securityDetails.js"></script> <!-- Script for security-related details -->
 
     <script>
         displayBrowserDetails();  // Call function for browser details
         displayFingerprintingDetails();  // Call function for fingerprinting and media devices
         displayNetworkDetails();  // Call function for network properties and geolocation
         displayPrivacyDetails();  // Call function for privacy-related details
+        displaySecurityDetails();  // Call function for security-related details
     </script>
 </body>
 </html>
