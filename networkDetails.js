@@ -1,5 +1,5 @@
-// Global variables to store VPN and geolocation coordinates
-let vpnCoordinates = null;
+// Global variables to store coordinates
+let vpnCoordinates = { lat: -23.5475, lon: -46.6361 }; // Example static VPN coordinates, adjust dynamically as needed
 let geoCoordinates = null;
 
 // Function to display network properties and geolocation details
@@ -35,9 +35,4 @@ function displayNetworkDetails() {
         .catch(error => {
             detailsDiv.innerHTML += `<p><strong>Error Fetching IP/Geolocation:</strong> ${error.message}</p>`;
         });
-}
-
-// Function to set VPN coordinates (example)
-function setVPNCoordinates(lat, lon) {
-    vpnCoordinates = { lat: lat, lon: lon };
 }
