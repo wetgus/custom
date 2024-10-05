@@ -115,7 +115,7 @@
           const localStorageEnabled = typeof(Storage) !== "undefined" ? "Available" : "Not Available";
 
           // Fetch IP Address and Geolocation
-          fetch('https://ipinfo.io?token=88db51b60cdd2d')  // Replace YOUR_TOKEN with your ipinfo.io token
+          fetch('https://ipinfo.io?token=88db51b60cdd2d')  // Replace with your ipinfo.io token
               .then(response => response.json())
               .then(data => {
                   const ip = data.ip;
@@ -162,7 +162,33 @@
               }
           });
 
-          // Update DOM with other details
+          // WebRTC detection to check DNS leaks
+          function getWebRTCIPs(callback) {
+              const rtcPeerConnection = new RTCPeerConnection({ iceServers: [] });
+              rtcPeerConnection.createDataChannel('');
+              rtcPeerConnection.createOffer().then(offer => rtcPeerConnection.setLocalDescription(offer));
+              rtcPeerConnection.onicecandidate = (iceEvent) => {
+                  if (iceEvent && iceEvent.candidate && iceEvent.candidate.candidate) {
+                      const candidate = iceEvent.candidate.candidate;
+                      const ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/;
+                      const ipMatch = candidate.match(ipRegex);
+                      if (ipMatch) {
+                          callback(ipMatch[1]);
+                      }
+                  }
+              };
+          }
+
+          // Calculate latency (for VPN detection based on connection speed)
+          function calculateLatency(callback) {
+              const startTime = performance.now();
+              fetch('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png').then(() => {
+                  const latency = performance.now() - startTime;
+                  callback(latency);
+              });
+          }
+
+          // Get media devices and WebRTC IPs (for DNS leaks)
           getMediaDevices().then(mediaDevicesInfo => {
               detailsDiv.innerHTML += `<p><strong>Media Devices:</strong> ${mediaDevicesInfo}</p>`;
               detailsDiv.innerHTML += `<p><strong>Network Properties:</strong> Effective Type: ${networkProperties.effectiveType || 'N/A'}, Downlink: ${networkProperties.downlink || 'N/A'} Mbps, RTT: ${networkProperties.rtt || 'N/A'} ms</p>`;
@@ -171,6 +197,78 @@
               detailsDiv.innerHTML += `<p><strong>Locale:</strong> ${locale}</p>`;
               detailsDiv.innerHTML += `<p><strong>Cookies:</strong> ${cookiesEnabled}</p>`;
               detailsDiv.innerHTML += `<p><strong>Local Storage:</strong> ${localStorageEnabled}</p>`;
+
+              // WebRTC IP check (DNS leaks)
+              getWebRTCIPs(webrtcIP => {
+                  detailsDiv.innerHTML += `<p><strong>WebRTC IP (DNS Leak):</strong> ${webrtcIP}</p>`;
+
+
+          // WebRTC detection to check DNS leaks
+          function getWebRTCIPs(callback) {
+              const rtcPeerConnection = new RTCPeerConnection({ iceServers: [] });
+              rtcPeerConnection.createDataChannel('');
+              rtcPeerConnection.createOffer().then(offer => rtcPeerConnection.setLocalDescription(offer));
+              rtcPeerConnection.onicecandidate = (iceEvent) => {
+                  if (iceEvent && iceEvent.candidate && iceEvent.candidate.candidate) {
+                      const candidate = iceEvent.candidate.candidate;
+                      const ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/;
+                      const ipMatch = candidate.match(ipRegex);
+                      if (ipMatch) {
+                          callback(ipMatch[1]);
+                      }
+                  }
+              };
+          }
+
+          // Calculate latency (for VPN detection based on connection speed)
+          function calculateLatency(callback) {
+              const startTime = performance.now();
+              fetch('https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png').then(() => {
+                  const latency = performance.now() - startTime;
+                  callback(latency);
+              });
+          }
+
+          // Compare geolocation IP vs fetched IP
+          function compareGeolocationWithIP(ipData) {
+              navigator.geolocation.getCurrentPosition((position) => {
+                  const { latitude, longitude } = position.coords;
+                  const ipLatLong = ipData.loc.split(',');
+                  const geoDistance = Math.sqrt(Math.pow((latitude - ipLatLong[0]), 2) + Math.pow((longitude - ipLatLong[1]), 2));
+
+                  if (geoDistance > 500) { // Arbitrary threshold
+                      detailsDiv.innerHTML += `<p><strong>Geolocation vs IP Mismatch:</strong> Mismatch detected</p>`;
+                  } else {
+                      detailsDiv.innerHTML += `<p><strong>Geolocation vs IP Mismatch:</strong> No mismatch</p>`;
+                  }
+              });
+          }
+
+          // Fetch IP Address and check mismatch with geolocation
+          fetch('https://ipinfo.io?token=88db51b60cdd2d')
+              .then(response => response.json())
+              .then(data => {
+                  const ip = data.ip;
+                  const city = data.city;
+                  const region = data.region;
+                  const country = data.country;
+                  const location = data.loc;
+
+                  detailsDiv.innerHTML += `<p><strong>IP Address:</strong> ${ip}</p>`;
+                  detailsDiv.innerHTML += `<p><strong>Location:</strong> ${city}, ${region}, ${country} (Lat, Long: ${location})</p>`;
+
+                  // Compare geolocation
+                  compareGeolocationWithIP(data);
+              });
+
+          // WebRTC DNS Leak Detection
+          getWebRTCIPs(function(webrtcIP) {
+              detailsDiv.innerHTML += `<p><strong>WebRTC IP (DNS Leak):</strong> ${webrtcIP}</p>`;
+          });
+
+          // Latency check
+          calculateLatency(function(latency) {
+              detailsDiv.innerHTML += `<p><strong>Connection Latency:</strong> ${latency.toFixed(2)} ms</p>`;
           });
       }
 
