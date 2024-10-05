@@ -20,11 +20,45 @@ function displayAdditionalDetails() {
     const touchSupport = navigator.maxTouchPoints > 0 ? "Touch supported" : "Touch not supported";
     detailsDiv.innerHTML += `<p><strong>Touch Support:</strong> ${touchSupport}</p>`;
 
-
     // Audio Context
     const audioContext = new (window.AudioContext || window.webkitAudioContext)();
     const sampleRate = audioContext.sampleRate;
     detailsDiv.innerHTML += `<p><strong>Audio Sample Rate:</strong> ${sampleRate} Hz</p>`;
+
+    // Device Type
+    const userAgent = navigator.userAgent.toLowerCase();
+    let deviceType = "Unknown device type";
+    if (/mobile/.test(userAgent)) {
+        deviceType = "Mobile";
+    } else if (/tablet/.test(userAgent)) {
+        deviceType = "Tablet";
+    } else if (/desktop/.test(userAgent)) {
+        deviceType = "Desktop";
+    }
+    detailsDiv.innerHTML += `<p><strong>Device Type:</strong> ${deviceType}</p>`;
+
+    // Media Devices
+    navigator.mediaDevices.enumerateDevices()
+        .then(devices => {
+            const mediaDevices = devices.map(device => `${device.kind}: ${device.label || 'Unnamed device'}`).join(', ');
+            detailsDiv.innerHTML += `<p><strong>Media Devices:</strong> ${mediaDevices || 'No media devices detected'}</p>`;
+        })
+        .catch(error => {
+            console.error('Error accessing media devices:', error);
+            detailsDiv.innerHTML += `<p><strong>Media Devices:</strong> Error accessing devices</p>`;
+        });
+
+    // User-Agent Overrides
+    const isUserAgentOverridden = (navigator.userAgent !== window.navigator.userAgent) ? "User-Agent overridden" : "User-Agent not overridden";
+    detailsDiv.innerHTML += `<p><strong>User-Agent Override:</strong> ${isUserAgentOverridden}</p>`;
+
+    // Additional Screen Properties
+    const screenWidth = window.screen.width;
+    const screenHeight = window.screen.height;
+    const pixelRatio = window.devicePixelRatio;
+    detailsDiv.innerHTML += `<p><strong>Screen Width:</strong> ${screenWidth}px</p>`;
+    detailsDiv.innerHTML += `<p><strong>Screen Height:</strong> ${screenHeight}px</p>`;
+    detailsDiv.innerHTML += `<p><strong>Device Pixel Ratio:</strong> ${pixelRatio}</p>`;
 }
 
 // Call the function to display additional details
