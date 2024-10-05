@@ -1,182 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Browser Details</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browser Details</title>
 </head>
 <body>
-<h1>Browser Details</h1>
-<div id="browser-details"></div>
+    <h1>Browser Details</h1>
+    <div id="browser-details"></div>
 
-<script>
-// Function to display browser details
-function displayBrowserDetails() {
-const detailsDiv = document.getElementById('browser-details');
+    <script>
+      // Function to display browser details
+      function displayBrowserDetails() {
+          const detailsDiv = document.getElementById('browser-details');
 
-// User Agent
-const userAgent = navigator.userAgent;
-detailsDiv.innerHTML += `<p><strong>User Agent:</strong> ${userAgent}</p>`;
+          // User Agent
+          const userAgent = navigator.userAgent;
+          detailsDiv.innerHTML += <p><strong>User Agent:</strong> ${userAgent}</p>;
 
-// Screen Resolution
-const screenWidth = window.screen.width;
-const screenHeight = window.screen.height;
-detailsDiv.innerHTML += `<p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>`;
+          // Screen Resolution
+          const screenWidth = window.screen.width;
+          const screenHeight = window.screen.height;
+          detailsDiv.innerHTML += <p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>;
 
-// Installed Fonts
-function detectFonts(fonts) {
-const canvas = document.createElement('canvas');
-const context = canvas.getContext('2d');
-const detectedFonts = [];
+          // Installed Fonts
+          function detectFonts(fonts) {
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              const detectedFonts = [];
 
-fonts.forEach(font => {
-context.font = `72px ${font}`;
-const width = context.measureText('abcdefghijklmnopqrstuvwxyz').width;
-context.font = '72px monospace'; // Fallback font
-const fallbackWidth = context.measureText('abcdefghijklmnopqrstuvwxyz').width;
+              fonts.forEach(font => {
+                  context.font = 72px ${font};
+                  const width = context.measureText('abcdefghijklmnopqrstuvwxyz').width;
+                  context.font = '72px monospace'; // Fallback font
+                  const fallbackWidth = context.measureText('abcdefghijklmnopqrstuvwxyz').width;
 
-if (width !== fallbackWidth) {
-detectedFonts.push(font);
-}
-});
+                  if (width !== fallbackWidth) {
+                      detectedFonts.push(font);
+                  }
+              });
 
-return detectedFonts;
-}
+              return detectedFonts;
+          }
 
-const fontsToCheck = ['Arial', 'Verdana', 'Times New Roman', 'Courier New', 'Georgia'];
-const installedFonts = detectFonts(fontsToCheck);
-detailsDiv.innerHTML += `<p><strong>Installed Fonts:</strong> ${installedFonts.join(', ')}</p>`;
+          const fontsToCheck = ['Arial', 'Verdana', 'Times New Roman', 'Courier New', 'Georgia'];
+          const installedFonts = detectFonts(fontsToCheck);
+          detailsDiv.innerHTML += <p><strong>Installed Fonts:</strong> ${installedFonts.join(', ')}</p>;
 
-// Installed Plugins
-const plugins = Array.from(navigator.plugins).map(plugin => plugin.name);
-detailsDiv.innerHTML += `<p><strong>Installed Plugins:</strong> ${plugins.join(', ')}</p>`;
+          // Installed Plugins
+          const plugins = Array.from(navigator.plugins).map(plugin => plugin.name);
+          detailsDiv.innerHTML += <p><strong>Installed Plugins:</strong> ${plugins.join(', ')}</p>;
 
-// Canvas Fingerprinting
-function canvasFingerprint() {
-const canvas = document.createElement('canvas');
-const context = canvas.getContext('2d');
-context.textBaseline = 'top';
-context.font = '14px Arial';
-context.fillText('Testing canvas fingerprinting', 2, 2);
-const dataUrl = canvas.toDataURL();
-const fingerprint = dataUrl.substring(dataUrl.indexOf(',') + 1); // Strip the prefix
-return fingerprint;
-}
+          // Canvas Fingerprinting
+          function canvasFingerprint() {
+              const canvas = document.createElement('canvas');
+              const context = canvas.getContext('2d');
+              context.textBaseline = 'top';
+              context.font = '14px Arial';
+              context.fillText('Testing canvas fingerprinting', 2, 2);
+              const dataUrl = canvas.toDataURL();
+              const fingerprint = dataUrl.substring(dataUrl.indexOf(',') + 1); // Strip the prefix
+              return fingerprint;
+          }
 
-const fingerprint = canvasFingerprint();
-detailsDiv.innerHTML += `<p><strong>Canvas Fingerprint:</strong> ${fingerprint}</p>`;
+          const fingerprint = canvasFingerprint();
+          detailsDiv.innerHTML += <p><strong>Canvas Fingerprint:</strong> ${fingerprint}</p>;
 
-// WebGL Fingerprinting
-function webGLFingerprint() {
-const canvas = document.createElement('canvas');
-const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
-if (!gl) {
-return 'WebGL not supported';
-}
+          // WebGL Fingerprinting
+          function webGLFingerprint() {
+              const canvas = document.createElement('canvas');
+              const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+              if (!gl) {
+                  return 'WebGL not supported';
+              }
 
-const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
-const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
-const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-const extensions = gl.getSupportedExtensions();
+              const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+              const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+              const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+              const extensions = gl.getSupportedExtensions();
 
-return {
-vendor,
-renderer,
-extensions
-};
-}
+              return {
+                  vendor,
+                  renderer,
+                  extensions
+              };
+          }
 
-const webGLInfo = webGLFingerprint();
-detailsDiv.innerHTML += `<p><strong>WebGL Vendor:</strong> ${webGLInfo.vendor}</p>`;
-detailsDiv.innerHTML += `<p><strong>WebGL Renderer:</strong> ${webGLInfo.renderer}</p>`;
-detailsDiv.innerHTML += `<p><strong>WebGL Extensions:</strong> ${webGLInfo.extensions.join(', ')}</p>`;
+          const webGLInfo = webGLFingerprint();
+          detailsDiv.innerHTML += <p><strong>WebGL Vendor:</strong> ${webGLInfo.vendor}</p>;
+          detailsDiv.innerHTML += <p><strong>WebGL Renderer:</strong> ${webGLInfo.renderer}</p>;
+          detailsDiv.innerHTML += <p><strong>WebGL Extensions:</strong> ${webGLInfo.extensions.join(', ')}</p>;
 
-// Media Devices
-function getMediaDevices() {
-return navigator.mediaDevices.enumerateDevices()
-.then(devices => devices.map(device => `${device.kind}: ${device.label}`).join(', '));
-}
+          // Media Devices
+          function getMediaDevices() {
+              return navigator.mediaDevices.enumerateDevices()
+                 .then(devices => devices.map(device => ${device.kind}: ${device.label}).join(', '));
+          }
 
-// Network Properties
-const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-const networkProperties = connection ? {
-effectiveType: connection.effectiveType,
-downlink: connection.downlink,
-rtt: connection.rtt
-} : 'Network API not supported';
+          // Network Properties
+          const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+          const networkProperties = connection ? {
+              effectiveType: connection.effectiveType,
+              downlink: connection.downlink,
+              rtt: connection.rtt
+          } : 'Network API not supported';
 
-// Timezone and Language
-const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-const language = navigator.language || navigator.userLanguage;
-const locale = Intl.DateTimeFormat().resolvedOptions().locale;
+          // Timezone and Language
+          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          const language = navigator.language || navigator.userLanguage;
+          const locale = Intl.DateTimeFormat().resolvedOptions().locale;
 
-// Cookies and Local Storage
-const cookiesEnabled = navigator.cookieEnabled ? "Enabled" : "Disabled";
-const localStorageEnabled = typeof(Storage) !== "undefined" ? "Available" : "Not Available";
+          // Cookies and Local Storage
+          const cookiesEnabled = navigator.cookieEnabled ? "Enabled" : "Disabled";
+          const localStorageEnabled = typeof(Storage) !== "undefined" ? "Available" : "Not Available";
 
-// Fetch IP Address and Geolocation
-          fetch('https://ipinfo.io?token=YOUR_TOKEN')  // Replace YOUR_TOKEN with your ipinfo.io token
+          // Fetch IP Address and Geolocation
           fetch('https://ipinfo.io?token=88db51b60cdd2d')  // Replace YOUR_TOKEN with your ipinfo.io token
-.then(response => response.json())
-.then(data => {
-const ip = data.ip;
-const city = data.city;
-const region = data.region;
-const country = data.country;
-const location = data.loc; // lat, long
+              .then(response => response.json())
+              .then(data => {
+                  const ip = data.ip;
+                  const city = data.city;
+                  const region = data.region;
+                  const country = data.country;
+                  const location = data.loc; // lat, long
 
-detailsDiv.innerHTML += `<p><strong>IP Address:</strong> ${ip}</p>`;
-detailsDiv.innerHTML += `<p><strong>Location:</strong> ${city}, ${region}, ${country} (Lat, Long: ${location})</p>`;
-});
+                  detailsDiv.innerHTML += <p><strong>IP Address:</strong> ${ip}</p>;
+                  detailsDiv.innerHTML += <p><strong>Location:</strong> ${city}, ${region}, ${country} (Lat, Long: ${location})</p>;
+              });
 
-// Navigator Storage Quota to detect Incognito Mode
-navigator.storage.estimate().then(estimate => {
-let quotaInfo = `<p><strong>Storage Quota:</strong> ${estimate.quota / (1024 * 1024)} MB</p>`;
-quotaInfo += `<p><strong>Used Storage:</strong> ${estimate.usage / (1024 * 1024)} MB</p>`;
+          // Navigator Storage Quota to detect Incognito Mode
+          navigator.storage.estimate().then(estimate => {
+              let quotaInfo = <p><strong>Storage Quota:</strong> ${estimate.quota / (1024 * 1024)} MB</p>;
+              quotaInfo += <p><strong>Used Storage:</strong> ${estimate.usage / (1024 * 1024)} MB</p>;
+              
+              // Detect Incognito mode based on significantly lower storage quota
+              if (estimate.quota < 1000000000) {
+                  quotaInfo += <p><strong>Incognito Mode Detection (Quota):</strong> Incognito mode detected</p>;
+              } else {
+                  quotaInfo += <p><strong>Incognito Mode Detection (Quota):</strong> Not in Incognito mode</p>;
+              }
+              
+              detailsDiv.innerHTML += quotaInfo;
+          });
 
-// Detect Incognito mode based on significantly lower storage quota
-if (estimate.quota < 1000000000) {
-quotaInfo += `<p><strong>Incognito Mode Detection (Quota):</strong> Incognito mode detected</p>`;
-} else {
-quotaInfo += `<p><strong>Incognito Mode Detection (Quota):</strong> Not in Incognito mode</p>`;
-}
+          // Secondary Incognito Detection using IndexedDB (Storage Availability Check)
+          function detectIncognitoWithIndexedDB(callback) {
+              let openDB = indexedDB.open("test");
+              openDB.onerror = function() {
+                  callback(true); // Incognito mode detected
+              };
+              openDB.onsuccess = function() {
+                  callback(false); // Regular mode
+              };
+          }
 
-detailsDiv.innerHTML += quotaInfo;
-});
+          detectIncognitoWithIndexedDB(function(isIncognito) {
+              if (isIncognito) {
+                  detailsDiv.innerHTML += <p><strong>Incognito Mode Detection (IndexedDB):</strong> Incognito mode detected</p>;
+              } else {
+                  detailsDiv.innerHTML += <p><strong>Incognito Mode Detection (IndexedDB):</strong> Not in Incognito mode</p>;
+              }
+          });
 
-// Secondary Incognito Detection using IndexedDB (Storage Availability Check)
-function detectIncognitoWithIndexedDB(callback) {
-let openDB = indexedDB.open("test");
-openDB.onerror = function() {
-callback(true); // Incognito mode detected
-};
-openDB.onsuccess = function() {
-callback(false); // Regular mode
-};
-}
+          // Update DOM with other details
+          getMediaDevices().then(mediaDevicesInfo => {
+              detailsDiv.innerHTML += <p><strong>Media Devices:</strong> ${mediaDevicesInfo}</p>;
+              detailsDiv.innerHTML += <p><strong>Network Properties:</strong> Effective Type: ${networkProperties.effectiveType || 'N/A'}, Downlink: ${networkProperties.downlink || 'N/A'} Mbps, RTT: ${networkProperties.rtt || 'N/A'} ms</p>;
+              detailsDiv.innerHTML += <p><strong>Timezone:</strong> ${timezone}</p>;
+              detailsDiv.innerHTML += <p><strong>Language:</strong> ${language}</p>;
+              detailsDiv.innerHTML += <p><strong>Locale:</strong> ${locale}</p>;
+              detailsDiv.innerHTML += <p><strong>Cookies:</strong> ${cookiesEnabled}</p>;
+              detailsDiv.innerHTML += <p><strong>Local Storage:</strong> ${localStorageEnabled}</p>;
+          });
+      }
 
-detectIncognitoWithIndexedDB(function(isIncognito) {
-if (isIncognito) {
-detailsDiv.innerHTML += `<p><strong>Incognito Mode Detection (IndexedDB):</strong> Incognito mode detected</p>`;
-} else {
-detailsDiv.innerHTML += `<p><strong>Incognito Mode Detection (IndexedDB):</strong> Not in Incognito mode</p>`;
-}
-});
-
-// Update DOM with other details
-getMediaDevices().then(mediaDevicesInfo => {
-detailsDiv.innerHTML += `<p><strong>Media Devices:</strong> ${mediaDevicesInfo}</p>`;
-detailsDiv.innerHTML += `<p><strong>Network Properties:</strong> Effective Type: ${networkProperties.effectiveType || 'N/A'}, Downlink: ${networkProperties.downlink || 'N/A'} Mbps, RTT: ${networkProperties.rtt || 'N/A'} ms</p>`;
-detailsDiv.innerHTML += `<p><strong>Timezone:</strong> ${timezone}</p>`;
-detailsDiv.innerHTML += `<p><strong>Language:</strong> ${language}</p>`;
-detailsDiv.innerHTML += `<p><strong>Locale:</strong> ${locale}</p>`;
-detailsDiv.innerHTML += `<p><strong>Cookies:</strong> ${cookiesEnabled}</p>`;
-detailsDiv.innerHTML += `<p><strong>Local Storage:</strong> ${localStorageEnabled}</p>`;
-});
-}
-
-// Call the function to display details
-displayBrowserDetails();
-</script>
+      // Call the function to display details
+      displayBrowserDetails();
+    </script>
 </body>
 </html>
