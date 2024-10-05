@@ -17,6 +17,11 @@ function displayBrowserDetails() {
     const screenHeight = window.screen.height;
     detailsDiv.innerHTML += `<p><strong>Screen Resolution:</strong> ${screenWidth} x ${screenHeight}</p>`;
 
+    // Viewport Dimensions
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    detailsDiv.innerHTML += `<p><strong>Viewport Dimensions:</strong> ${viewportWidth} x ${viewportHeight}</p>`;
+
     // Installed Fonts Detection
     function detectFonts(fonts) {
         const canvas = document.createElement('canvas');
