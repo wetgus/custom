@@ -32,11 +32,10 @@ function displayAdditionalDetails() {
         deviceType = "Mobile";
     } else if (/tablet/.test(userAgent)) {
         deviceType = "Tablet";
-    } else if (/desktop/.test(userAgent)) {
+    } else {
         deviceType = "Desktop";
     }
     detailsDiv.innerHTML += `<p><strong>Device Type:</strong> ${deviceType}</p>`;
-
 
     // User-Agent Overrides
     const isUserAgentOverridden = (navigator.userAgent !== window.navigator.userAgent) ? "User-Agent overridden" : "User-Agent not overridden";
@@ -45,6 +44,23 @@ function displayAdditionalDetails() {
     // Additional Screen Properties
     const pixelRatio = window.devicePixelRatio;
     detailsDiv.innerHTML += `<p><strong>Device Pixel Ratio:</strong> ${pixelRatio}</p>`;
+
+    // Audio/Video Codec Support
+    const videoCodecs = ['video/mp4; codecs="avc1.42E01E"', 'video/webm; codecs="vp8"', 'video/ogg; codecs="theora"'];
+    const audioCodecs = ['audio/mpeg', 'audio/ogg; codecs="vorbis"', 'audio/webm; codecs="opus"', 'audio/wav; codecs="1"'];
+
+    function checkCodecSupport(codec, type) {
+        const mediaElement = type === 'video' ? document.createElement('video') : document.createElement('audio');
+        return mediaElement.canPlayType(codec) ? codec : null;
+    }
+
+    // Check supported video codecs
+    const supportedVideoCodecs = videoCodecs.filter(codec => checkCodecSupport(codec, 'video')).join(', ') || "No supported video codecs";
+    detailsDiv.innerHTML += `<p><strong>Supported Video Codecs:</strong> ${supportedVideoCodecs}</p>`;
+
+    // Check supported audio codecs
+    const supportedAudioCodecs = audioCodecs.filter(codec => checkCodecSupport(codec, 'audio')).join(', ') || "No supported audio codecs";
+    detailsDiv.innerHTML += `<p><strong>Supported Audio Codecs:</strong> ${supportedAudioCodecs}</p>`;
 }
 
 // Call the function to display additional details
